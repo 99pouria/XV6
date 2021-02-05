@@ -9,7 +9,7 @@ int main()
     getpid();
     getpid();
 
-    printf(1, "we called getpid syscall %d time(s)\n", getpid());
+    printf(1, "we called getpid syscall %d time(s)\n", getSyscallCounter(11));
 
     exit();
     return 0;
