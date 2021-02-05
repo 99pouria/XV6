@@ -104,3 +104,16 @@ sys_getSyscallCounter(void)
     return -1;
   return myproc()->syscallCounter[sysCallID];
 }
+int 
+sys_getchildren(void)
+{
+  int* p;
+  int i;
+  p=getchildren();
+
+  for (i=0 ; i<63 && *(p + i)>-1 ; i++){
+      cprintf("%d /", *(p + i));
+  }
+  cprintf("\n");
+  return 1;
+}

@@ -25,6 +25,7 @@ int sleep(int);
 int uptime(void);
 int getparentid(void);
 int getSyscallCounter(int);
+int getchildren(void);
 
 // ulib.c
 int stat(const char*, struct stat*);
