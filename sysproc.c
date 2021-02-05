@@ -89,3 +89,17 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+int 
+sys_getchildren(void)
+{
+  int* p;
+  int i;
+  p=getchildren();
+
+  for (i=0 ; i<63 && *(p + i)>-1 ; i++){
+      cprintf("%d /", *(p + i));
+  }
+  cprintf("\n");
+  return 1;
+}

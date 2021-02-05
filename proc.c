@@ -199,6 +199,9 @@ fork(void)
   np->sz = curproc->sz;
   np->parent = curproc;
   *np->tf = *curproc->tf;
+  
+  
+  
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
@@ -211,6 +214,13 @@ fork(void)
   safestrcpy(np->name, curproc->name, sizeof(curproc->name));
 
   pid = np->pid;
+  //set children
+  for (i=0;i<63;i++)
+    np->cids[i]=-1;
+  np->numchild=0;
+
+  curproc->cids[curproc->numchild]=pid;
+  curproc->numchild++;
 
   acquire(&ptable.lock);
 
@@ -531,4 +541,15 @@ procdump(void)
     }
     cprintf("\n");
   }
+}
+
+int 
+*getchildren(void)
+{
+  struct proc *curproc = myproc();
+  // int i ;
+  // for (i=0 ; i<curproc->numchild; i++){
+  //   cprintf("%d /",curproc->cids[i]);
+  // }
+  return curproc->cids;
 }
