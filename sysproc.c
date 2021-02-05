@@ -95,3 +95,9 @@ sys_getparentid(void)
 {
   return getparentid();
 }
+
+int
+sys_getSyscallCounter(void)
+{myproc()->syscallCounter[11];
+  return getSyscallCounter();
+}
