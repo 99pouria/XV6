@@ -95,3 +95,12 @@ sys_getparentid(void)
 {
   return getparentid();
 }
+
+int
+sys_getSyscallCounter(void)
+{
+  int sysCallID;
+  if(argint(0, &sysCallID) < 0)
+    return -1;
+  return myproc()->syscallCounter[sysCallID];
+}
