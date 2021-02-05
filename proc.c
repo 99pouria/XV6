@@ -256,6 +256,7 @@ exit(void)
   iput(curproc->cwd);
   end_op();
   curproc->cwd = 0;
+  memset(curproc->syscallCounter, 0, 24*sizeof(int));
 
   acquire(&ptable.lock);
 
