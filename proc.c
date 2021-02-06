@@ -88,7 +88,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-
+  p->priority=3;//default priority
   release(&ptable.lock);
 
   // Allocate kernel stack.
@@ -330,26 +330,38 @@ wait(void)
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
+
+
+
+
+
 void
 scheduler(void)
 {
   struct proc *p;
+  struct proc *p1;
   struct cpu *c = mycpu();
   c->proc = 0;
   
   for(;;){
     // Enable interrupts on this processor.
     sti();
-
+    struct proc *highest_pri;
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
 
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
+
+      highest_pri = p;//iterate between process to set highest_pri
+      for(p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1++){
+	  if(p1->state != RUNNABLE)
+	  continue;
+  	if(p1->priority < highest_pri->priority)   //larger value, lower priority
+	  highest_pri = p1;
+      }
+      p = highest_pri;
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
@@ -366,6 +378,51 @@ scheduler(void)
   }
 }
 
+
+
+
+
+
+
+
+
+// void 
+// scheduler(void){
+  
+//   struct proc *p;
+//   struct cpu *c = mycpu();
+//   c->proc = 0;
+  
+//   for(;;){
+//     // Enable interrupts on this processor.
+//     sti();
+
+//     // Loop over process table looking for process to run.
+//     acquire(&ptable.lock);
+//     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+//       if(p->state != RUNNABLE)
+//         continue;
+      
+    
+//       // Switch to chosen process.  It is the process's job
+//       // to release ptable.lock and then reacquire it
+//       // before jumping back to us.
+//       c->proc = p;
+//       switchuvm(p);
+//       p->state = RUNNING;
+
+//       swtch(&(c->scheduler), p->context);
+//       switchkvm();
+
+//       // Process is done running for now.
+//       // It should have changed its p->state before coming back.
+//       c->proc = 0;
+//     }
+//     release(&ptable.lock);
+
+//   }
+
+// }
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state. Saves and restores
 // intena because intena is a property of this
@@ -558,4 +615,14 @@ int
   //   cprintf("%d /",curproc->cids[i]);
   // }
   return curproc->cids;
+}
+int
+setpriority(int pri){
+  if (pri>6)
+    pri=5;
+  if (pri<1)
+    return -1;//error happend
+  struct proc *curproc =myproc();
+  curproc->priority=pri;
+  return pri;
 }

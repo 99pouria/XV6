@@ -117,3 +117,10 @@ sys_getchildren(void)
   cprintf("\n");
   return 1;
 }
+int
+sys_setpriority(void){
+  int priority;
+  if(argint(0,&priority)<0)
+    return -1;
+  return setpriority(priority);
+}

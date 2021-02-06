@@ -52,6 +52,7 @@ struct proc {
   int syscallCounter[24];       // Stores syscalls counter
   int cids[63];//array to point to children id
   int numchild;//number of children   
+  int priority;//priority number
 };
 
 // Process memory is laid out contiguously, low addresses first:
