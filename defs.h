@@ -124,6 +124,7 @@ int             getparentid(void);
 int             getSyscallCounter(int);
 int*            getchildren(void);
 int             setpriority(int);
+int             waitForProcessTime(int *,int *,int *);
 // swtch.S
 void            swtch(struct context**, struct context*);
 

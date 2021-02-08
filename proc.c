@@ -306,8 +306,9 @@ waitForProcessTime(int *CBT,int *TT,int *WT)
       if(p->state == ZOMBIE){
         // Found one.
         
-        *WT=*TT - *CBT;//we behave sleeping and ready time simmilar .
-        //*WT=*TT - *CBT - p->sleeping_time ;
+        // *WT=*TT - *CBT;//we behave sleeping and ready time simmilar .
+        //WT=ready time ;
+        *WT=*TT - *CBT - p->sleeping_time ;
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
@@ -339,7 +340,6 @@ waitForProcessTime(int *CBT,int *TT,int *WT)
     sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
 }
-
 
 // Wait for a child process to exit and return its pid.
 // Return -1 if this process has no children.
@@ -696,3 +696,4 @@ setpriority(int pri){
   curproc->priority=pri;
   return pri;
 }
+

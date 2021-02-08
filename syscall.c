@@ -107,6 +107,7 @@ extern int sys_getparentid(void);
 extern int sys_getSyscallCounter(void);
 extern int sys_getchildren(void);
 extern int sys_setpriority(void);
+extern int sys_getCBT(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -134,6 +135,7 @@ static int (*syscalls[])(void) = {
 [SYS_getSyscallCounter] sys_getSyscallCounter,
 [SYS_getchildren] sys_getchildren,
 [SYS_setpriority] sys_setpriority,
+[SYS_getCBT] sys_getCBT,
 };
 
 void

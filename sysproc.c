@@ -124,3 +124,18 @@ sys_setpriority(void){
     return -1;
   return setpriority(priority);
 }
+
+int
+sys_getCBT(void){
+  int *CBT;
+  int *TT;
+  int *WT;
+  
+ if (argptr(0, (void*)&CBT, sizeof(CBT)) < 0)
+    return -1;
+  if (argptr(1, (void*)&TT, sizeof(TT)) < 0)
+    return -1;
+  if (argptr(2, (void*)&WT, sizeof(WT)) < 0)
+    return -1;
+  return waitForProcessTime(CBT, TT, WT);
+}
