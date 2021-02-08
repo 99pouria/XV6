@@ -24,8 +24,9 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int getparentid(void);
-int getSyscallCounter(int);
 int getchildren(void);
+int getSyscallCounter(int);
+int changepolicy(int);
 int setpriority(int);
 
 // ulib.c

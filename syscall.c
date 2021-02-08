@@ -104,8 +104,9 @@ extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_getparentid(void);
-extern int sys_getSyscallCounter(void);
 extern int sys_getchildren(void);
+extern int sys_getSyscallCounter(void);
+extern int sys_changepolicy(void);
 extern int sys_setpriority(void);
 
 static int (*syscalls[])(void) = {
@@ -131,8 +132,9 @@ static int (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_getparentid] sys_getparentid,
-[SYS_getSyscallCounter] sys_getSyscallCounter,
 [SYS_getchildren] sys_getchildren,
+[SYS_getSyscallCounter] sys_getSyscallCounter,
+[SYS_changepolicy] sys_changepolicy,
 [SYS_setpriority] sys_setpriority,
 };
 

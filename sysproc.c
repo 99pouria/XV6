@@ -124,3 +124,11 @@ sys_setpriority(void){
     return -1;
   return setpriority(priority);
 }
+
+int
+sys_changepolicy(void){
+  int p;
+  if(argint(0,&p)<0)
+    return -1;
+  return changepolicy(p);
+}
