@@ -90,6 +90,12 @@ found:
   p->pid = nextpid++;
   p->priority = 3;//default priority
   p->rr_timer = QUANTUM;
+  p->priority=3;//default priority
+  p->creation_time=0;
+  p->terminate_time=0;
+  p->running_time=0;
+  p->ready_time=0;
+  p->sleeping_time=0;
   release(&ptable.lock);
 
   // Allocate kernel stack.
@@ -112,6 +118,9 @@ found:
   p->context = (struct context*)sp;
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
+
+  p->creation_time=ticks;///this record the creation time .clock of ticks.
+
 
   return p;
 }
@@ -275,8 +284,63 @@ exit(void)
 
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
+  curproc->terminate_time=ticks;// set terminated time of process when ever it becomes ZOMBIE
   sched();
   panic("zombie exit");
+}
+
+
+int
+waitForProcessTime(int *CBT,int *TT,int *WT)
+{
+  struct proc *p;
+  int havekids, pid;
+  struct proc *curproc = myproc();
+  
+  acquire(&ptable.lock);
+  for(;;){
+    // Scan through table looking for exited children.
+    havekids = 0;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->parent != curproc)
+        continue;
+      havekids = 1;
+      if(p->state == ZOMBIE){
+        // Found one.
+        
+        // *WT=*TT - *CBT;//we behave sleeping and ready time simmilar .
+        //WT=ready time ;
+        *WT=*TT - *CBT - p->sleeping_time ;
+        pid = p->pid;
+        kfree(p->kstack);
+        p->kstack = 0;
+        freevm(p->pgdir);
+        p->pid = 0;
+        p->parent = 0;
+        p->name[0] = 0;
+        p->killed = 0;
+        p->numchild=0;
+        p->cids[0]=-1;
+        p->creation_time=0;
+        p->terminate_time=0;
+        p->running_time=0;
+        p->ready_time=0;
+        p->sleeping_time=0;
+        p->state = UNUSED;
+        release(&ptable.lock);
+        return pid;
+      }
+    }
+
+    // No point waiting if we don't have any children.
+    if(!havekids || curproc->killed){
+      release(&ptable.lock);
+      return -1;
+    }
+
+    // Wait for children to exit.  (See wakeup1 call in proc_exit.)
+    sleep(curproc, &ptable.lock);  //DOC: wait-sleep
+  }
 }
 
 // Wait for a child process to exit and return its pid.
@@ -306,6 +370,13 @@ wait(void)
         p->parent = 0;
         p->name[0] = 0;
         p->killed = 0;
+        p->numchild=0;
+        p->cids[0]=-1;
+        p->creation_time=0;
+        p->terminate_time=0;
+        p->running_time=0;
+        p->ready_time=0;
+        p->sleeping_time=0;
         p->state = UNUSED;
         release(&ptable.lock);
         return pid;
@@ -622,3 +693,4 @@ setpriority(int pri){
   curproc->priority=pri;
   return pri;
 }
+

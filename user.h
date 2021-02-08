@@ -27,6 +27,7 @@ int getparentid(void);
 int getSyscallCounter(int);
 int getchildren(void);
 int setpriority(int);
+int getCBT(int*,int*,int*);
 
 // ulib.c
 int stat(const char*, struct stat*);

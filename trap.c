@@ -53,6 +53,19 @@ trap(struct trapframe *tf)
       ticks++;
       wakeup(&ticks);
       release(&tickslock);
+  /*  
+    when ticks had been updated then update
+        running_time;
+        ready_time;
+        sleeping_time;*/
+    if(myproc()) {
+        if(myproc()->state == RUNNING)
+          myproc()->running_time++;
+        else if(myproc()->state == SLEEPING)
+          myproc()->sleeping_time++;
+        else if(myproc()->state == RUNNABLE)
+          myproc()->ready_time++;
+      }
     }
     lapiceoi();
     break;

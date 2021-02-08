@@ -54,6 +54,12 @@ struct proc {
   int numchild;                // number of children   
   int priority;                // priority number
   int rr_timer;                // a variable for remaining time of rr quantum 
+  int creation_time;//allocate it in allocate func proc.
+  int terminate_time;//allocate it in exit func
+  int running_time;
+  int ready_time;
+  int sleeping_time;
+  
 };
 
 // Process memory is laid out contiguously, low addresses first:

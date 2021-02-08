@@ -24,3 +24,4 @@
 #define SYS_getSyscallCounter 24
 #define SYS_getchildren 23
 #define SYS_setpriority 28
+#define SYS_getCBT 30
