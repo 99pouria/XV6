@@ -139,3 +139,10 @@ sys_getCBT(void){
     return -1;
   return waitForProcessTime(CBT, TT, WT);
 }
+int
+sys_changepolicy(void){
+  int p;
+  if(argint(0,&p)<0)
+    return -1;
+  return changepolicy(p);
+}

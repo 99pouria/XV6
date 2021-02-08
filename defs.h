@@ -125,6 +125,7 @@ int             getSyscallCounter(int);
 int*            getchildren(void);
 int             setpriority(int);
 int             waitForProcessTime(int *,int *,int *);
+int             changepolicy(int);
 // swtch.S
 void            swtch(struct context**, struct context*);
 
