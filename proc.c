@@ -91,6 +91,7 @@ found:
   p->priority = 3;//default priority
   p->rr_timer = QUANTUM;
   p->priority=3;//default priority
+  p->mlq=0;
   p->creation_time=0;
   p->terminate_time=0;
   p->running_time=0;
@@ -368,6 +369,7 @@ wait(void)
         freevm(p->pgdir);
         p->pid = 0;
         p->parent = 0;
+        p->mlq=0;
         p->name[0] = 0;
         p->killed = 0;
         p->numchild=0;
@@ -404,6 +406,7 @@ wait(void)
 //      via swtch back to the scheduler.
 
 
+
 void
 scheduler(void)
 {
@@ -411,23 +414,60 @@ scheduler(void)
   struct proc *p1;
   struct cpu *c = mycpu();
   c->proc = 0;
-  
+   int lp=0;
+
   for(;;){
     // Enable interrupts on this processor.
     sti();
     struct proc *highest_pri;
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
+
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
+      if(Policy==3){
+          if (layered_policy==1 || layered_policy==2)
+                lp=0;
+          else if (layered_policy==3 || layered_policy==4)
+                lp=1;
+            else if (layered_policy==5 || layered_policy==6)
+                lp=2;
+            else if (layered_policy==8 || layered_policy==7)
+                lp=3;
+            else{
+                layered_policy=0;
+                lp=0;
+            }
 
-      if (Policy == 2) {            // in priority sched
+          if(p->mlq!=lp)
+                continue;
+          
+
+      }
+
+      if (Policy == 2 || (Policy==3 && lp==1)) {            // in priority sched
         highest_pri = p;            // iterate between process to set highest_pri
         for(p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1++){
           if(p1->state != RUNNABLE)
+            continue; 
+          if(lp==1 && p1->mlq!=1)
             continue;
+        
           if(p1->priority < highest_pri->priority)   //larger value, lower priority
+            highest_pri = p1;
+        }
+        p = highest_pri;
+      }
+      else if (Policy==3 && lp==2){//for multilayered
+        highest_pri = p;            // iterate between process to set highest_pri
+        for(p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1++){
+          if(p1->state != RUNNABLE)
+            continue; 
+          if(p1->mlq!=2)
+            continue;
+        
+          if(p1->priority > highest_pri->priority)   //larger value, lower priority
             highest_pri = p1;
         }
         p = highest_pri;

@@ -14,7 +14,7 @@ extern struct cpu cpus[NCPU];
 extern int ncpu;
 
 int Policy;
-
+int layered_policy;
 //PAGEBREAK: 17
 // Saved registers for kernel context switches.
 // Don't need to save all the segment registers (%cs, etc),
@@ -61,7 +61,7 @@ struct proc {
   int running_time;
   int ready_time;
   int sleeping_time;
-  
+  int mlq;//layeredq
 };
 
 // Process memory is laid out contiguously, low addresses first:
