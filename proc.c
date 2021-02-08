@@ -310,6 +310,8 @@ waitForProcessTime(int *CBT,int *TT,int *WT)
         
         // *WT=*TT - *CBT;//we behave sleeping and ready time simmilar .
         //WT=ready time ;
+        *CBT = p->running_time;
+        *TT = p->terminate_time - p->creation_time;
         *WT=*TT - *CBT - p->sleeping_time ;
         pid = p->pid;
         kfree(p->kstack);
