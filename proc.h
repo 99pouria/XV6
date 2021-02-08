@@ -53,6 +53,12 @@ struct proc {
   int cids[63];//array to point to children id
   int numchild;//number of children   
   int priority;//priority number
+  int creation_time;//allocate it in allocate func proc.
+  int terminate_time;//allocate it in exit func
+  int running_time;
+  int ready_time;
+  int sleeping_time;
+  
 };
 
 // Process memory is laid out contiguously, low addresses first:
